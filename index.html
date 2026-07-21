@@ -8,51 +8,321 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#f5f7f8;--surface:#fff;--surface-2:#f9fbfb;--line:#e3e8ea;--text:#152126;--muted:#6f7f86;--primary:#0f766e;--primary-soft:#e3f4f1;--success:#1f9d67;--success-soft:#e8f8f0;--warning:#c08a08;--shadow:0 8px 24px rgba(16,24,40,.06);--radius:18px}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:'Inter',system-ui,sans-serif;background:linear-gradient(180deg,#f7fafb 0%,#f4f7f8 100%);color:var(--text)}
-    .container{width:min(1240px,calc(100% - 32px));margin:32px auto 56px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
-    .brand{display:flex;align-items:center;gap:14px;min-width:0}
-    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#0f766e,#159a8c);display:grid;place-items:center;color:#fff;box-shadow:var(--shadow);flex:0 0 auto}
-    .brand h1{margin:0;font-size:clamp(1.3rem,1.1rem + 1vw,1.9rem);font-weight:800;letter-spacing:-.03em;line-height:1.1}
-    .brand p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
-    .status-chip{display:inline-flex;align-items:center;gap:8px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:999px;box-shadow:var(--shadow);color:var(--muted);font-weight:600;font-size:.9rem;white-space:nowrap}
-    .status-dot{width:10px;height:10px;border-radius:999px;background:var(--success);box-shadow:0 0 0 6px rgba(31,157,103,.12)}
-    .summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:28px}
-    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-    .summary-card{padding:22px}
-    .summary-label{margin:0 0 14px;color:var(--muted);font-size:.95rem}
-    .summary-value{font-size:clamp(1.7rem,1.4rem + 1vw,2.3rem);font-weight:800;letter-spacing:-.04em;margin:0 0 10px;line-height:1.05}
-    .summary-sub{color:var(--muted);font-size:.92rem}
-    .profit-positive{color:var(--success)}
-    .profit-warning{color:var(--warning)}
-    .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 18px;flex-wrap:wrap}
-    .section-head h2{margin:0;font-size:1.2rem;letter-spacing:-.02em}
-    .section-note{color:var(--muted);font-size:.92rem}
-    .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;background:var(--primary-soft);color:var(--primary);font-size:.88rem;font-weight:700}
-    .portfolio-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
-    .portfolio-card{padding:18px;display:flex;flex-direction:column;gap:16px;min-height:248px}
-    .portfolio-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-    .portfolio-name{margin:0;font-size:1.03rem;font-weight:800}
-    .portfolio-meta{margin-top:4px;color:var(--muted);font-size:.84rem}
-    .online-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--success-soft);color:var(--success);font-size:.82rem;font-weight:700;white-space:nowrap}
-    .online-badge::before{content:'';width:8px;height:8px;border-radius:999px;background:currentColor}
-    .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .metric-box{background:var(--surface-2);border:1px solid #edf1f3;border-radius:14px;padding:14px}
-    .metric-label{color:var(--muted);font-size:.8rem;margin-bottom:8px}
-    .metric-value{font-size:1.3rem;font-weight:700;letter-spacing:-.03em;line-height:1.05}
-    .metric-unit{color:var(--muted);font-size:.78rem;margin-top:4px}
-    .profit-box{margin-top:auto;background:var(--success-soft);color:#115c40;border:1px solid #cdebdc;border-radius:16px;padding:14px}
-    .profit-box.negative{background:#fff6e7;border-color:#f3dfb6;color:#9b6c02}
-    .profit-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
-    .profit-label{font-size:.84rem;font-weight:700}
-    .profit-value{font-size:1.5rem;font-weight:800;letter-spacing:-.04em}
-    .profit-meta{margin-top:8px;display:flex;justify-content:space-between;gap:8px;color:inherit;font-size:.82rem;opacity:.9}
-    .empty-state,.error-state{padding:32px;text-align:center;color:var(--muted)}
-    .footer-note{margin-top:22px;color:var(--muted);font-size:.88rem;text-align:right}
-    @media (max-width:1080px){.portfolio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.summary-grid{grid-template-columns:1fr}}
-    @media (max-width:640px){.container{width:min(100% - 20px,1240px);margin-top:20px}.topbar,.section-head{flex-direction:column;align-items:stretch}.portfolio-grid{grid-template-columns:1fr}.portfolio-card{min-height:auto}.profit-row,.profit-meta{flex-direction:column;align-items:flex-start}}
+    :root {
+      --bg: #f5f7f8;
+      --surface: #ffffff;
+      --surface-2: #f9fbfb;
+      --line: #e3e8ea;
+      --text: #152126;
+      --muted: #6f7f86;
+      --primary: #0f766e;
+      --primary-soft: #e3f4f1;
+      --success: #1f9d67;
+      --success-soft: #e8f8f0;
+      --warning: #c08a08;
+      --shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(180deg, #f7fafb 0%, #f4f7f8 100%);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1240px, calc(100% - 32px));
+      margin: 32px auto 56px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0f766e, #159a8c);
+      display: grid;
+      place-items: center;
+      color: white;
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.3rem, 1.1rem + 1vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 0 6px rgba(31,157,103,0.12);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card {
+      padding: 22px;
+    }
+
+    .summary-label {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .summary-value {
+      font-size: clamp(1.7rem, 1.4rem + 1vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 0 0 10px;
+      line-height: 1.05;
+    }
+
+    .summary-sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .profit-positive { color: var(--success); }
+    .profit-warning { color: var(--warning); }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 18px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .portfolio-card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 248px;
+    }
+
+    .portfolio-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .portfolio-name {
+      margin: 0;
+      font-size: 1.03rem;
+      font-weight: 800;
+    }
+
+    .portfolio-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .online-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--success-soft);
+      color: var(--success);
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .online-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-box {
+      background: var(--surface-2);
+      border: 1px solid #edf1f3;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .metric-unit {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 4px;
+    }
+
+    .profit-box {
+      margin-top: auto;
+      background: var(--success-soft);
+      color: #115c40;
+      border: 1px solid #cdebdc;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .profit-box.negative {
+      background: #fff6e7;
+      border-color: #f3dfb6;
+      color: #9b6c02;
+    }
+
+    .profit-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+    }
+
+    .profit-label {
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .profit-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .profit-meta {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: inherit;
+      font-size: 0.82rem;
+      opacity: 0.9;
+    }
+
+    .empty-state, .error-state {
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: right;
+    }
+
+    @media (max-width: 1080px) {
+      .portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .container { width: min(100% - 20px, 1240px); margin-top: 20px; }
+      .topbar, .section-head { flex-direction: column; align-items: stretch; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-card { min-height: auto; }
+      .profit-row, .profit-meta { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
@@ -65,12 +335,15 @@
             <path d="M16 8H19V11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div><h1>MT5 Portfolio Dashboard</h1><p>เชื่อมข้อมูลพอร์ตจาก MT5 แบบเรียลไทม์ผ่าน backend</p></div>
+        <div>
+          <h1>MT5 Portfolio Dashboard</h1>
+          <p>เชื่อมข้อมูลพอร์ตจาก MT5 แบบเรียลไทม์ผ่าน backend</p>
+        </div>
       </div>
       <div class="status-chip"><span class="status-dot"></span><span id="serviceStatus">กำลังเชื่อมต่อ API...</span></div>
     </header>
 
-    <section class="summary-grid">
+    <section class="summary-grid" id="summaryGrid">
       <article class="card summary-card">
         <p class="summary-label">เงินทุนรวมเริ่มต้น</p>
         <h2 class="summary-value" id="totalInitialBalance">-</h2>
@@ -96,6 +369,7 @@
         </div>
         <div class="section-note" id="lastRefresh">รอข้อมูลจาก backend</div>
       </div>
+
       <div class="portfolio-grid" id="portfolioGrid">
         <div class="card empty-state">กำลังโหลดข้อมูลจาก API...</div>
       </div>
@@ -106,36 +380,48 @@
 
   <script>
     const API_URL = 'https://mt5-backend-render.onrender.com/api/dashboard';
-    const currency = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    const fmt = v => `${currency.format(Number(v || 0))} USC`;
-    const fmtPct = v => `${Number(v || 0) >= 0 ? '+' : ''}${Number(v || 0).toFixed(2)}%`;
-    const fmtTHB = v => `THB ${currency.format(Number(v || 0))}`;
 
-    function isCentAccount(item) {
-      const cur = String(item.accountCurrency || '').toUpperCase();
-      const digits = Number(item.currencyDigits || 2);
-      return cur.includes('CENT') || cur === 'USC' || digits > 2;
+    const currency = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function fmtUSD(value) {
+      return `${currency.format(Number(value || 0))} USC`;
     }
 
-    function normalizeMoney(item, value) {
-      return isCentAccount(item) ? Number(value || 0) / 100 : Number(value || 0);
+    function fmtTHB(value) {
+      return `THB ${currency.format(Number(value || 0))}`;
+    }
+
+    function fmtPct(value) {
+      const num = Number(value || 0);
+      return `${num >= 0 ? '+' : ''}${num.toFixed(2)}%`;
     }
 
     function setSummary(summary) {
-      document.getElementById('totalInitialBalance').textContent = fmt(summary.totalInitialBalance);
-      const profit = Number(summary.totalProfit || 0);
-      const eq = Number(summary.totalEquity || 0);
-      document.getElementById('totalProfit').textContent = `${profit >= 0 ? '+' : ''}${currency.format(profit)} USC`;
-      document.getElementById('totalProfit').className = `summary-value ${profit >= 0 ? 'profit-positive' : 'profit-warning'}`;
-      document.getElementById('totalEquity').textContent = fmt(eq);
-      document.getElementById('initialBalanceSub').textContent = `รวม ${summary.totalAccounts || 0} บัญชี ช่วง ${currency.format(summary.minInitialBalance || 0)}-${currency.format(summary.maxInitialBalance || 0)} USC`;
-      document.getElementById('profitSub').textContent = `${fmtTHB(summary.totalProfitTHB)} • ${fmtPct(summary.totalGainPct)}`;
-      document.getElementById('equitySub').textContent = `อัปเดตล่าสุด ${new Date(summary.lastRefresh).toLocaleString('th-TH')}`;
-      document.getElementById('accountCount').textContent = `${summary.totalAccounts || 0} บัญชี`;
-      document.getElementById('lastRefresh').textContent = `อัปเดต ${new Date(summary.lastRefresh).toLocaleString('th-TH')}`;
+      const totalInitialBalance = document.getElementById('totalInitialBalance');
+      const totalProfit = document.getElementById('totalProfit');
+      const totalEquity = document.getElementById('totalEquity');
+      const initialBalanceSub = document.getElementById('initialBalanceSub');
+      const profitSub = document.getElementById('profitSub');
+      const equitySub = document.getElementById('equitySub');
+      const accountCount = document.getElementById('accountCount');
+      const lastRefresh = document.getElementById('lastRefresh');
+
+      totalInitialBalance.textContent = fmtUSD(summary.totalInitialBalance);
+      totalProfit.textContent = `${Number(summary.totalProfit || 0) >= 0 ? '+' : ''}${currency.format(Number(summary.totalProfit || 0))} USC`;
+      totalProfit.className = `summary-value ${Number(summary.totalProfit || 0) >= 0 ? 'profit-positive' : 'profit-warning'}`;
+      totalEquity.textContent = fmtUSD(summary.totalEquity);
+
+      initialBalanceSub.textContent = `รวม ${summary.totalAccounts || 0} บัญชี ช่วง ${currency.format(summary.minInitialBalance || 0)}-${currency.format(summary.maxInitialBalance || 0)} USC`;
+      profitSub.textContent = `${fmtTHB(summary.totalProfitTHB)} • ${fmtPct(summary.totalGainPct)}`;
+      equitySub.textContent = `อัปเดตล่าสุด ${new Date(summary.lastRefresh).toLocaleString('th-TH')}`;
+      accountCount.textContent = `${summary.totalAccounts || 0} บัญชี`;
+      lastRefresh.textContent = `อัปเดต ${new Date(summary.lastRefresh).toLocaleString('th-TH')}`;
     }
 
-    function renderPortfolios(portfolios, summaryUsdThb) {
+    function renderPortfolios(portfolios) {
       const grid = document.getElementById('portfolioGrid');
       if (!Array.isArray(portfolios) || portfolios.length === 0) {
         grid.innerHTML = '<div class="card empty-state">ยังไม่มีข้อมูลพอร์ตจาก MT5 กรุณารัน EA แล้วส่งข้อมูลเข้ามาก่อน</div>';
@@ -143,14 +429,8 @@
       }
 
       grid.innerHTML = portfolios.map((item, index) => {
-        const initial = normalizeMoney(item, item.initialBalance);
-        const equity = normalizeMoney(item, item.equity);
-        const profit = equity - initial;
-        const profitThb = profit * Number(item.usdThb || summaryUsdThb || 0);
-        const gainPct = initial ? (profit / initial) * 100 : 0;
+        const profit = Number(item.profit || 0);
         const positive = profit >= 0;
-        const unit = isCentAccount(item) ? 'CENT' : 'USC';
-
         return `
           <article class="card portfolio-card">
             <div class="portfolio-top">
@@ -164,24 +444,24 @@
             <div class="metrics">
               <div class="metric-box">
                 <div class="metric-label">เงินทุนเริ่มต้น</div>
-                <div class="metric-value">${currency.format(initial)}</div>
-                <div class="metric-unit">${unit}</div>
+                <div class="metric-value">${currency.format(Number(item.initialBalance || 0))}</div>
+                <div class="metric-unit">USC</div>
               </div>
               <div class="metric-box">
                 <div class="metric-label">Equity ปัจจุบัน</div>
-                <div class="metric-value">${currency.format(equity)}</div>
-                <div class="metric-unit">${unit}</div>
+                <div class="metric-value">${currency.format(Number(item.equity || 0))}</div>
+                <div class="metric-unit">USC</div>
               </div>
             </div>
 
             <div class="profit-box ${positive ? '' : 'negative'}">
               <div class="profit-row">
                 <div class="profit-label">กำไรสะสม</div>
-                <div class="profit-value">${positive ? '+' : ''}${currency.format(profit)} ${unit}</div>
+                <div class="profit-value">${positive ? '+' : ''}${currency.format(profit)} USC</div>
               </div>
               <div class="profit-meta">
                 <span>Ping: ${item.pingMs || 0}ms</span>
-                <strong>${fmtPct(gainPct)} • ${fmtTHB(profitThb)}</strong>
+                <strong>${fmtPct(item.gainPct || 0)}</strong>
               </div>
             </div>
           </article>
@@ -191,15 +471,17 @@
 
     async function loadDashboard() {
       const serviceStatus = document.getElementById('serviceStatus');
-      document.getElementById('apiLabel').textContent = API_URL;
+      const apiLabel = document.getElementById('apiLabel');
+      apiLabel.textContent = API_URL;
 
       try {
         const response = await fetch(API_URL, { cache: 'no-store' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
+
         serviceStatus.textContent = 'เชื่อมต่อ backend สำเร็จ';
         setSummary(data.summary || {});
-        renderPortfolios(data.portfolios || [], data.summary?.usdThb || 0);
+        renderPortfolios(data.portfolios || []);
       } catch (error) {
         serviceStatus.textContent = 'เชื่อมต่อ backend ไม่สำเร็จ';
         document.getElementById('portfolioGrid').innerHTML = `
