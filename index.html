@@ -108,8 +108,12 @@
       return Number(value || 0) / accountScale(item);
     }
 
-    function normalizeMoney(item, value) {
+    function usdValue(item, value) {
       return fromAccountUnit(item, value);
+    }
+
+    function thbValue(item, usdAmount, rate) {
+      return usdValue(item, usdAmount) * Number(rate || 0);
     }
 
     function setSummary(summary) {
@@ -135,10 +139,10 @@
       grid.innerHTML = portfolios.map((item, index) => {
         const initialRaw = Number(item.initialBalance || 0);
         const equityRaw = Number(item.equity || 0);
-        const initial = fromAccountUnit(item, initialRaw);
-        const equity = fromAccountUnit(item, equityRaw);
+        const initial = usdValue(item, initialRaw);
+        const equity = usdValue(item, equityRaw);
         const profit = equity - initial;
-        const profitThb = profit * Number(item.usdThb || summaryUsdThb || 0);
+        const profitThb = thbValue(item, profit, item.usdThb || summaryUsdThb || 0);
         const gainPct = initial ? (profit / initial) * 100 : 0;
         const positive = profit >= 0;
         const unit = isCentAccount(item) ? 'CENT' : 'USD';
