@@ -78,15 +78,10 @@
 
     <section>
       <div class="section-head">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-          <h2>พอร์ตการลงทุนออนไลน์</h2>
-          <span class="pill" id="accountCount">0 บัญชี</span>
-        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><h2>พอร์ตการลงทุนออนไลน์</h2><span class="pill" id="accountCount">0 บัญชี</span></div>
         <div class="section-note" id="lastRefresh">รอข้อมูลจาก backend</div>
       </div>
-      <div class="portfolio-grid" id="portfolioGrid">
-        <div class="card empty-state">กำลังโหลดข้อมูลจาก API...</div>
-      </div>
+      <div class="portfolio-grid" id="portfolioGrid"><div class="card empty-state">กำลังโหลดข้อมูลจาก API...</div></div>
     </section>
 
     <div class="footer-note">Backend API: <span id="apiLabel">https://mt5-backend-render.onrender.com/api/dashboard</span></div>
@@ -95,7 +90,7 @@
   <script>
     const API_URL = 'https://mt5-backend-render.onrender.com/api/dashboard';
     const currency = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    const fmt = v => `${currency.format(Number(v || 0))} USC`;
+    const fmt = v => `${currency.format(Number(v || 0))} USD`;
     const fmtPct = v => `${Number(v || 0) >= 0 ? '+' : ''}${Number(v || 0).toFixed(2)}%`;
     const fmtTHB = v => `THB ${currency.format(Number(v || 0))}`;
 
@@ -105,18 +100,26 @@
       return cur.includes('CENT') || cur === 'USC' || digits > 2;
     }
 
+    function accountScale(item) {
+      return isCentAccount(item) ? 100 : 1;
+    }
+
+    function fromAccountUnit(item, value) {
+      return Number(value || 0) / accountScale(item);
+    }
+
     function normalizeMoney(item, value) {
-      return isCentAccount(item) ? Number(value || 0) / 100 : Number(value || 0);
+      return fromAccountUnit(item, value);
     }
 
     function setSummary(summary) {
       document.getElementById('totalInitialBalance').textContent = fmt(summary.totalInitialBalance);
       const profit = Number(summary.totalProfit || 0);
       const eq = Number(summary.totalEquity || 0);
-      document.getElementById('totalProfit').textContent = `${profit >= 0 ? '+' : ''}${currency.format(profit)} USC`;
+      document.getElementById('totalProfit').textContent = `${profit >= 0 ? '+' : ''}${currency.format(profit)} USD`;
       document.getElementById('totalProfit').className = `summary-value ${profit >= 0 ? 'profit-positive' : 'profit-warning'}`;
       document.getElementById('totalEquity').textContent = fmt(eq);
-      document.getElementById('initialBalanceSub').textContent = `รวม ${summary.totalAccounts || 0} บัญชี ช่วง ${currency.format(summary.minInitialBalance || 0)}-${currency.format(summary.maxInitialBalance || 0)} USC`;
+      document.getElementById('initialBalanceSub').textContent = `รวม ${summary.totalAccounts || 0} บัญชี`;
       document.getElementById('profitSub').textContent = `${fmtTHB(summary.totalProfitTHB)} • ${fmtPct(summary.totalGainPct)}`;
       document.getElementById('equitySub').textContent = `อัปเดตล่าสุด ${new Date(summary.lastRefresh).toLocaleString('th-TH')}`;
       document.getElementById('accountCount').textContent = `${summary.totalAccounts || 0} บัญชี`;
@@ -130,13 +133,15 @@
         return;
       }
       grid.innerHTML = portfolios.map((item, index) => {
-        const initial = normalizeMoney(item, item.initialBalance);
-        const equity = normalizeMoney(item, item.equity);
+        const initialRaw = Number(item.initialBalance || 0);
+        const equityRaw = Number(item.equity || 0);
+        const initial = fromAccountUnit(item, initialRaw);
+        const equity = fromAccountUnit(item, equityRaw);
         const profit = equity - initial;
         const profitThb = profit * Number(item.usdThb || summaryUsdThb || 0);
         const gainPct = initial ? (profit / initial) * 100 : 0;
         const positive = profit >= 0;
-        const unit = isCentAccount(item) ? 'CENT' : 'USC';
+        const unit = isCentAccount(item) ? 'CENT' : 'USD';
         return `
           <article class="card portfolio-card">
             <div class="portfolio-top">
@@ -147,11 +152,11 @@
               <div class="online-badge">${item.online === false ? 'Offline' : 'Online'}</div>
             </div>
             <div class="metrics">
-              <div class="metric-box"><div class="metric-label">เงินทุนเริ่มต้น</div><div class="metric-value">${currency.format(initial)}</div><div class="metric-unit">${unit}</div></div>
-              <div class="metric-box"><div class="metric-label">Equity ปัจจุบัน</div><div class="metric-value">${currency.format(equity)}</div><div class="metric-unit">${unit}</div></div>
+              <div class="metric-box"><div class="metric-label">เงินทุนเริ่มต้น</div><div class="metric-value">${currency.format(initial)}</div><div class="metric-unit">${unit}${isCentAccount(item) ? ' (÷100 เป็น USD)' : ''}</div></div>
+              <div class="metric-box"><div class="metric-label">Equity ปัจจุบัน</div><div class="metric-value">${currency.format(equity)}</div><div class="metric-unit">${unit}${isCentAccount(item) ? ' (÷100 เป็น USD)' : ''}</div></div>
             </div>
             <div class="profit-box ${positive ? '' : 'negative'}">
-              <div class="profit-row"><div class="profit-label">กำไรสะสม</div><div class="profit-value">${positive ? '+' : ''}${currency.format(profit)} ${unit}</div></div>
+              <div class="profit-row"><div class="profit-label">กำไรสะสม</div><div class="profit-value">${positive ? '+' : ''}${currency.format(profit)} USD</div></div>
               <div class="profit-meta"><span>Ping: ${item.pingMs || 0}ms</span><strong>${fmtPct(gainPct)} • ${fmtTHB(profitThb)}</strong></div>
             </div>
           </article>
