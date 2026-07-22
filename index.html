@@ -142,7 +142,7 @@
         const initial = usdValue(item, initialRaw);
         const equity = usdValue(item, equityRaw);
         const profit = equity - initial;
-        const profitThb = thbValue(item, profit, item.usdThb || summaryUsdThb || 0);
+        const profitThb = profit * Number(item.usdThb || summaryUsdThb || 0);
         const gainPct = initial ? (profit / initial) * 100 : 0;
         const positive = profit >= 0;
         const unit = isCentAccount(item) ? 'CENT' : 'USD';
